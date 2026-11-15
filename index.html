@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#090b10" />
+  <title>STARBOUND &#8211; GAMERKIE EDITION | One Hero. Infinite Worlds.</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="app-container">
+    <canvas id="game-canvas" width="1280" height="720" aria-label="STARBOUND &#8211; GAMERKIE EDITION Game Viewport"></canvas>
+
+    <!-- IN-GAME HUD -->
+    <header id="hud-overlay" class="hidden">
+      <div class="hud-group hud-left">
+        <div class="hud-badge">
+          <span class="hud-label">LEVEL</span>
+          <span id="hud-level" class="hud-value">1</span>
+        </div>
+        <div class="hud-badge">
+          <span class="hud-label">WORLD</span>
+          <span id="hud-world" class="hud-value">DARK FOREST</span>
+        </div>
+        <div class="hud-badge">
+          <span class="hud-label">WEATHER</span>
+          <span id="hud-weather" class="hud-value">CLEAR</span>
+        </div>
+      </div>
+
+      <div class="hud-group hud-center">
+        <div class="hud-objective-box">
+          <span class="hud-label">OBJECTIVE</span>
+          <span id="hud-objective" class="hud-objective-text">Reach the Mysterious Portal</span>
+        </div>
+        <div id="hud-boss-bar" class="hud-boss-container hidden">
+          <div class="hud-boss-header">
+            <span id="hud-boss-name">ARACHNE BROODMOTHER</span>
+            <span id="hud-boss-hp-text">100%</span>
+          </div>
+          <div class="hud-progress-track">
+            <div id="hud-boss-fill" class="hud-progress-fill boss-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-group hud-right">
+        <div class="hud-badge">
+          <span class="hud-label">STARS</span>
+          <span id="hud-stars" class="hud-value star-text">&#9733; 0 / 3</span>
+        </div>
+        <div class="hud-badge health-badge">
+          <span class="hud-label">VITALITY</span>
+          <div class="hud-health-track">
+            <div id="hud-health-fill" class="hud-health-fill"></div>
+          </div>
+        </div>
+        <button id="btn-hud-mute" class="hud-icon-btn" title="Toggle Audio" aria-label="Toggle Audio">🔊</button>
+        <button id="btn-hud-fullscreen" class="hud-icon-btn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">&#9974;</button>
+        <button id="btn-hud-pause" class="hud-icon-btn" title="Pause Game" aria-label="Pause Game">&#10074;&#10074;</button>
+      </div>
+    </header>
+
+    <!-- EVENT BANNER -->
+    <div id="event-banner" class="event-banner hidden"></div>
+
+    <!-- MOBILE TOUCH CONTROLS -->
+    <div id="touch-controls" class="touch-controls hidden" aria-hidden="true">
+      <div class="touch-cluster touch-left">
+        <button id="touch-btn-left" class="touch-btn" data-action="left">&#9664;</button>
+        <button id="touch-btn-right" class="touch-btn" data-action="right">&#9654;</button>
+        <button id="touch-btn-down" class="touch-btn touch-btn-small" data-action="down">&#9660;</button>
+      </div>
+      <div class="touch-cluster touch-right">
+        <button id="touch-btn-up" class="touch-btn touch-btn-small" data-action="up">&#9650;</button>
+        <button id="touch-btn-rope" class="touch-btn touch-btn-rope" data-action="rope">&#10160; GRAPPLE</button>
+        <button id="touch-btn-release" class="touch-btn touch-btn-release" data-action="release">&#9986; RELEASE</button>
+        <button id="touch-btn-jump" class="touch-btn touch-btn-jump" data-action="jump">&#10514; JUMP</button>
+      </div>
+    </div>
+
+    <!-- MAIN MENU -->
+    <section id="menu-main" class="menu-screen">
+      <div class="menu-card main-menu-card">
+        <div class="brand-tag">GAMERKIE EDITION</div>
+        <h1 class="game-title">STARBOUND</h1>
+        <p class="game-subtitle">ONE HERO. INFINITE WORLDS. NO TWO JOURNEYS ALIKE.</p>
+        <div class="hero-preview-banner">
+          <span class="stat-pill" id="menu-stat-level">Saved Level: 1</span>
+          <span class="stat-pill" id="menu-stat-stars">Total Stars: &#9733; 0</span>
+          <span class="stat-pill" id="menu-stat-unique">Unique Worlds Verified: 0</span>
+        </div>
+        <div class="menu-btn-stack">
+          <button id="btn-continue" class="menu-btn primary-btn">CONTINUE JOURNEY</button>
+          <button id="btn-new-journey" class="menu-btn accent-btn">NEW JOURNEY</button>
+          <div class="menu-btn-row">
+            <button id="btn-world-map" class="menu-btn">WORLD MAP</button>
+            <button id="btn-level-select" class="menu-btn">LEVEL SELECTION</button>
+          </div>
+          <div class="menu-btn-row">
+            <button id="btn-settings" class="menu-btn">SETTINGS & AUDIO</button>
+            <button id="btn-how-to-play" class="menu-btn">HOW TO PLAY</button>
+          </div>
+          <button id="btn-run-tests" class="menu-btn subtle-btn">RUN AUTOMATED QA TEST SUITE</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORLD MAP MODAL -->
+    <section id="menu-world-map" class="menu-screen hidden">
+      <div class="menu-card wide-card">
+        <h2 class="section-title">INFINITE COSMOS &#8211; WORLD ATLAS</h2>
+        <p class="section-desc">Biomes unlock dynamically as the stickman hero traverses the procedural frontier.</p>
+        <div id="world-map-grid" class="world-grid"></div>
+        <div class="modal-actions">
+          <button id="btn-close-world-map" class="menu-btn primary-btn">BACK TO MENU</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEVEL SELECTION MODAL -->
+    <section id="menu-level-select" class="menu-screen hidden">
+      <div class="menu-card wide-card">
+        <h2 class="section-title">PROCEDURAL SECTOR ARCHIVE</h2>
+        <p class="section-desc">Replay any conquered sector or launch into the current frontier level.</p>
+        <div id="level-select-grid" class="level-grid"></div>
+        <div class="modal-actions">
+          <button id="btn-close-level-select" class="menu-btn primary-btn">BACK TO MENU</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS MODAL -->
+    <section id="menu-settings" class="menu-screen hidden">
+      <div class="menu-card">
+        <h2 class="section-title">SYSTEM & AUDIO SETTINGS</h2>
+        <div class="settings-list">
+          <label class="setting-row">
+            <span>Background Music</span>
+            <input type="checkbox" id="chk-music" checked />
+          </label>
+          <label class="setting-row">
+            <span>Sound Effects & Ambience</span>
+            <input type="checkbox" id="chk-sfx" checked />
+          </label>
+          <label class="setting-row">
+            <span>Master Music Volume</span>
+            <input type="range" id="rng-music-vol" min="0" max="100" value="70" />
+          </label>
+          <label class="setting-row">
+            <span>Master SFX Volume</span>
+            <input type="range" id="rng-sfx-vol" min="0" max="100" value="85" />
+          </label>
+          <label class="setting-row">
+            <span>Horror Jump Scares & Intense Flicker</span>
+            <input type="checkbox" id="chk-horror" checked />
+          </label>
+          <label class="setting-row">
+            <span>Always Show On-Screen Touch Controls</span>
+            <input type="checkbox" id="chk-touch-always" />
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-close-settings" class="menu-btn primary-btn">SAVE & RETURN</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW TO PLAY MODAL -->
+    <section id="menu-how-to-play" class="menu-screen hidden">
+      <div class="menu-card wide-card">
+        <h2 class="section-title">HERO FIELD MANUAL</h2>
+        <div class="manual-grid">
+          <div class="manual-block">
+            <h3>MOVEMENT & PLATFORMING</h3>
+            <p>Use <b>A / D</b> or <b>&#9664; / &#9654;</b> to run. Press <b>W / Space / &#9650;</b> to jump. Push heavy crates and boulders onto pressure switches to unlock ancient gates.</p>
+          </div>
+          <div class="manual-block">
+            <h3>ROPE PHYSICS & GRAPPLING</h3>
+            <p>Press <b>E / Shift / K</b> or <b>Click / Touch Grapple</b> to cast a Verlet rope to the nearest overhead branch or anchor ring. Swing with Left/Right, climb with Up/Down, and press <b>Jump or Release</b> for a tangential momentum boost.</p>
+          </div>
+          <div class="manual-block">
+            <h3>WEATHER & SURVIVAL</h3>
+            <p>Rain and ice reduce surface friction. Gales and blizzards push both the hero and the rope. In dark caves and haunted forests, keep your lantern charged and evade ambush predators.</p>
+          </div>
+          <div class="manual-block">
+            <h3>OBJECTIVES & BOSSES</h3>
+            <p>Every sector generates a verified unique objective&#8212;from rescuing trapped creatures and activating power nodes to surviving storms and toppling milestone Bosses using environmental traps.</p>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-close-how-to-play" class="menu-btn primary-btn">UNDERSTOOD</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAUSE MENU -->
+    <section id="menu-pause" class="menu-screen hidden">
+      <div class="menu-card">
+        <h2 class="section-title">JOURNEY PAUSED</h2>
+        <p id="pause-sector-info" class="section-desc">Level 1 &#8211; Dark Forest</p>
+        <div class="menu-btn-stack">
+          <button id="btn-resume" class="menu-btn primary-btn">RESUME GAME</button>
+          <button id="btn-restart-level" class="menu-btn">RESTART CURRENT LEVEL</button>
+          <button id="btn-pause-settings" class="menu-btn">SETTINGS & AUDIO</button>
+          <button id="btn-pause-main-menu" class="menu-btn danger-btn">RETURN TO MAIN MENU</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEVEL COMPLETION MODAL -->
+    <section id="menu-victory" class="menu-screen hidden">
+      <div class="menu-card">
+        <div class="brand-tag victory-tag">SECTOR CONQUERED</div>
+        <h2 id="victory-title" class="section-title">PORTAL SYNCHRONIZED</h2>
+        <div id="victory-stars-display" class="victory-stars">&#9733; &#9733; &#9733;</div>
+        <div class="summary-box">
+          <div class="summary-row"><span>Sector Cleared:</span><strong id="sum-level">Level 1</strong></div>
+          <div class="summary-row"><span>Biome & Weather:</span><strong id="sum-biome">Dark Forest (Clear)</strong></div>
+          <div class="summary-row"><span>Completion Time:</span><strong id="sum-time">00:34.2</strong></div>
+          <div class="summary-row"><span>Layout Fingerprint:</span><strong id="sum-hash" class="mono-text">0x8F4A2C91</strong></div>
+        </div>
+        <div class="menu-btn-stack">
+          <button id="btn-next-level" class="menu-btn primary-btn">ENTER NEXT WORLD &#9654;</button>
+          <button id="btn-victory-replay" class="menu-btn">REPLAY SECTOR</button>
+          <button id="btn-victory-menu" class="menu-btn">MAIN MENU</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME OVER MODAL -->
+    <section id="menu-gameover" class="menu-screen hidden">
+      <div class="menu-card">
+        <div class="brand-tag danger-tag">SIGNAL LOST</div>
+        <h2 class="section-title">THE HERO HAS FALLEN</h2>
+        <p id="gameover-reason" class="section-desc">Overwhelmed by environmental hazards.</p>
+        <div class="menu-btn-stack">
+          <button id="btn-retry" class="menu-btn primary-btn">RETRY CURRENT LEVEL</button>
+          <button id="btn-gameover-menu" class="menu-btn">RETURN TO MAIN MENU</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONFIRM NEW JOURNEY MODAL -->
+    <section id="menu-confirm-reset" class="menu-screen hidden">
+      <div class="menu-card">
+        <h2 class="section-title">CONFIRM NEW JOURNEY</h2>
+        <p class="section-desc">Starting a New Journey resets current level progression to Level 1 while preserving lifetime duplicate-prevention fingerprints. Proceed?</p>
+        <div class="menu-btn-row">
+          <button id="btn-confirm-yes" class="menu-btn danger-btn">YES, RESET & START</button>
+          <button id="btn-confirm-no" class="menu-btn primary-btn">CANCEL</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QA AUTOMATED TEST REPORT MODAL -->
+    <section id="menu-test-report" class="menu-screen hidden">
+      <div class="menu-card wide-card">
+        <h2 class="section-title">AUTOMATED QA & SOLVABILITY VERIFICATION</h2>
+        <div id="test-results-container" class="test-results-box"></div>
+        <div class="modal-actions">
+          <button id="btn-close-tests" class="menu-btn primary-btn">CLOSE REPORT</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
